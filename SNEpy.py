@@ -15,29 +15,51 @@ perplexity = 5
 init_dims = 18
 no_dims = 2
 
-#Import matlab file
-drug_mat = sio.loadmat('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\psilocin.mat')    #open the .mat
-drug_str = drug_mat['psilocin']            #opent the structure
-drug_str = drug_str[0]                #first structure
-data = drug_str['data']
-data = data[0]
+#Import matlab files
+drug_mat = sio.loadmat('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\MDL.mat')    #open the .mat
+coord_mat = sio.loadmat('pair_coord_source.mat')
+
+
+x = np.array(coord_mat['x_paircoord'])
+y = np.array(coord_mat['y_paircoord'])
+
+
+drug_str = np.array(drug_mat['MDL'][0])            #opent the structure
+
+data = np.array(drug_str['data'][0])
+
 names = drug_str['namesOfElecs']
 average = np.mean(data,0).T
 
-coh = np.zeros([6,4,66])    #band,time,pair
+coh = np.zeros([4,6,66])    #band,time,pair
 
 #select the bands
-for i in np.arange(0,6,1):
-    coh[i,:,:] = average[:,i:56:14].T
+for i,val in enumerate(np.arange(0,56,14)):
+    coh[i,:,:] = average[:,val:val+6].T
 
 #Diferentiate the data in time
-diff_coh = np.diff(coh,1,1)
+diff_coh = np.diff(coh,1,0)
 diff_coh_res = np.reshape(diff_coh,[18,66],'F').T        
+coh_res = np.reshape(coh,[24,66],'F').T
+
 
 #t-SNE on dataset
 mapped = tsne.tsne(diff_coh_res, no_dims, init_dims, perplexity)
 
 labels = kmeans2(mapped,3,10)
 
+#Show the coherence clusters
+plt.figure(0)
 plt.scatter(mapped[:,0],mapped[:,1],c = labels[1], s = 150,alpha = 0.5)
+
+for i,coord in enumerate(mapped):
+    plt.text(coord[0],coord[1],str(names[0][i][0][0]))
 plt.show
+
+
+plt.figure(4)
+plt.matshow(diff_coh_res)
+
+
+plt.figure(5)
+plt.matshow(coh_res)

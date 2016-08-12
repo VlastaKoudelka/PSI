@@ -8,7 +8,7 @@ function graph_dynamics
 load('D:\Filip_PSI_mysi\M Data\psi_coherences.mat', 'CoH')
 load el_names electrodes
 load con_loc x y
-brain = imread('brain.png');
+brain = imread('Mozek.png');
 
 delta = CoH(:,1:4);
 theta = CoH(:,5:8);
