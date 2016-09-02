@@ -14,7 +14,7 @@ import scipy.io as sio
 plt.close('all')
 
 #Import matlab files
-data_mat = sio.loadmat('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\Koherence_zobrazeni_data\PSI_dif_p.mat')
+data_mat = sio.loadmat('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\Koherence_zobrazeni_data\SAL_dif_p.mat')
 coord_mat = sio.loadmat('Locations.mat')
 brain = mpimg.imread('brain2.png')
 
@@ -26,15 +26,16 @@ index = coord_mat['index'][0]           #selected pair indices
 dif_treat = data_mat['dif_treat']
 dif_treat = dif_treat[:,::3]                #[:,::2] selects 20-30
 #dif_psi_treat = data_mat['dif_psi_treat']
-p_treat = data_mat['p_treat']                #[index]        #select 36 from 66 pairs
+#dif_psi_treat = dif_psi_treat[:,::3]
+p_treat = data_mat['p_treat']#[index]        #select 36 from 66 pairs
 p_treat = p_treat[:,::3]                    #[:,::2] selects 20-30
 #p_psi_treat = data_mat['p_psi_treat'][index]
-
+#p_psi_treat = p_psi_treat[:,::3]
 no_el = len(index)
 
 #------------Treatment
 
-drug = ['PSI ','.jpg']
+drug = ['Saline ','.jpg']
 band_title = ['Delta:1.0-4.0 Hz', 'Theta: 4.0 - 8.0 Hz', 'Alpha: 8.0 - 12.0 Hz', 'Beta: 12.0 - 25.0 Hz', 'High Beta: 25.0 - 30.0 Hz','Gamma: 30.0 - 40.0 Hz']
 band_name = ['Delta','Theta','Alpha','Beta','High_Beta','Gamma']
 for i in np.arange(p_treat.shape[1]):
@@ -50,10 +51,10 @@ for i in np.arange(p_treat.shape[1]):
     plt.plot([200,300],[1500,1500],linewidth = 2,color = 'blue')
     plt.text(400,1450,'-75%',fontsize=6)
     plt.text(300,1450,'-50%',fontsize=6)
-    plt.text(200,1450,'-25%',fontsize=6)
+    plt.text(200,1450,'-10%',fontsize=6)
     plt.text(550,1450,'75%',fontsize=6)
     plt.text(650,1450,'50%',fontsize=6)
-    plt.text(750,1450,'25%',fontsize=6)
+    plt.text(750,1450,'10%',fontsize=6)
               
                     
     for j in np.arange(no_el):        
@@ -78,7 +79,7 @@ for i in np.arange(p_treat.shape[1]):
             show = 0
                     
         if show:        
-            plt.plot(x_cord[j],y_cord[j],color,linewidth = linew,alpha = 0.4)  
+            plt.plot(x_cord[j],y_cord[j],color,linewidth = linew,alpha = 0.4,solid_capstyle='round')  
 
     #save the figure        
     plt.title(drug[0] + band_title[i])            
@@ -93,7 +94,7 @@ plt.show
 
 
 
-#drug = ['PSI_WAY ','.jpg']
+#drug = ['PSI_HAL ','.jpg']
 #band_title = ['Delta:1.0-4.0 Hz', 'Theta: 4.0 - 8.0 Hz', 'Alpha: 8.0 - 12.0 Hz', 'Beta: 12.0 - 25.0 Hz', 'High Beta: 25.0 - 30.0 Hz','Gamma: 30.0 - 40.0 Hz']
 #band_name = ['Delta','Theta','Alpha','Beta','High_Beta','Gamma']
 #for i in np.arange(p_treat.shape[1]):
@@ -136,7 +137,7 @@ plt.show
 #            show = 0
 #                 
 #        if show:        
-#            plt.plot(x_cord[j],y_cord[j],color,linewidth = linew,alpha = 0.4)  
+#            plt.plot(x_cord[j],y_cord[j],color,linewidth = linew,alpha = 0.4,solid_capstyle='round')  
 #            
 #        plt.title(drug[0] + band_title[i])            
 #        f_name = drug[0]+band_name[i]+'.jpeg'

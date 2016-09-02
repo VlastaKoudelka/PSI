@@ -1,0 +1,12 @@
+# Global
+*.zip
+*.gzip
+*.tgz
+*.DS_Store
+*.jpeg
+
+# Specific
+*.wndpos
+*.xml
+gambling-2-1-1.txt
+advisor.xsl

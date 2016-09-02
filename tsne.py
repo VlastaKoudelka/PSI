@@ -152,7 +152,7 @@ def tsne(X = Math.array([]), no_dims = 2, initial_dims = 50, perplexity = 30.0):
 		Y = Y - Math.tile(Math.mean(Y, 0), (n, 1));
 
 		# Compute current value of cost function
-		if (iter + 1) % 10 == 0:
+		if (iter + 1) % 1000 == 0:
 			C = Math.sum(P * Math.log(P / Q));
 			print "Iteration ", (iter + 1), ": error is ", C
 
@@ -161,8 +161,7 @@ def tsne(X = Math.array([]), no_dims = 2, initial_dims = 50, perplexity = 30.0):
 			P = P / 4;
 
 	# Return solution
-	return Y;
-
+	return [Y,C];
 
 if __name__ == "__main__":
 	print "Run Y = tsne.tsne(X, no_dims, perplexity) to perform t-SNE on your dataset."

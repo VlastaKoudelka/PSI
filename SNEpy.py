@@ -20,6 +20,8 @@ no_dims = 2
 no_clstr = 4
 no_pairs = 36
 
+drug_name = 'PSI'
+
 #Import matlab files
 drug_mat = sio.loadmat('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\MATSoubory\psilocin.mat')    #open the .mat
 coord_mat = sio.loadmat('Locations.mat')
@@ -48,8 +50,12 @@ diff_coh = np.diff(coh,1,0)
 diff_coh_res = np.reshape(diff_coh,[18,no_pairs],'F').T        
 coh_res = np.reshape(coh,[24,no_pairs],'F').T
 
+#randomly permute the pair coherences
+perm = np.random.permutation(no_pairs)
+diff_coh_res = diff_coh_res[perm]
+
 #t-SNE on dataset
-mapped = tsne.tsne(diff_coh_res, no_dims, init_dims, perplexity)
+[mapped,C] = tsne.tsne(diff_coh_res, no_dims, init_dims, perplexity)
 
 #Clusterring
 labels = kmeans2(mapped,no_clstr,10)[1]
@@ -82,49 +88,87 @@ for i in np.arange(no_clstr):
 colors = cm.jet(np.linspace(0, 1, no_clstr))
 
 plt.figure(0)
-plt.scatter(mapped[:,0],mapped[:,1],c = colors[best_kmeans,:], s = 100,alpha = 0.8)
+plt.scatter(mapped[:,0],mapped[:,1],c = colors[best_kmeans,:], s = 150,alpha = 0.7)
+plt.tick_params(labeltop=False, labelbottom=False, bottom=True, top=True
+                    ,left=True,right=True, labelright=False,labelleft=False)
+plt.title(drug_name + ' coherence clusters after t-SNE', fontsize = 20)
+plt.ylabel('Feature 2',fontsize = 18)
+plt.xlabel('Feature 1',fontsize = 18)  
+
+f_name = drug_name + '_clusters.jpeg'
+plt.savefig(f_name, dpi=300, facecolor='w', edgecolor='w',
+orientation='portrait', papertype=None, format=None,
+transparent=False, bbox_inches=None, pad_inches=0.1,
+frameon=None)              
 
 #---Show electrode numbers
 for i,coord in enumerate(mapped):
-    plt.text(coord[0],coord[1],str(names[0][index[i]][0][0]),fontsize=16)
+    plt.text(coord[0],coord[1],str(names[0][index[i]][0][0]),fontsize=12)
     plt.show
+    
+f_name = drug_name + '_clusters.jpeg'
+plt.savefig(f_name, dpi=300, facecolor='w', edgecolor='w',
+orientation='portrait', papertype=None, format=None,
+transparent=False, bbox_inches=None, pad_inches=0.1,
+frameon=None)  
 
 #---Show brain
 plt.figure(1)
 plt.imshow(brain)
+plt.title(drug_name + ' clusters in topographic view', fontsize = 20)    
 
 for i in np.arange(len(x_cord)):
-    plt.plot(x_cord[i],y_cord[i], c = colors[best_kmeans[i]],linewidth = 2)  
+    plt.plot(x_cord[i],y_cord[i], c = colors[best_kmeans[i]],linewidth = 3,alpha = 0.65,solid_capstyle='round') 
+    plt.tick_params(labeltop=False, labelbottom=False, bottom=False, top=False
+                    ,left=False,right=False, labelright=False,labelleft=False)
     plt.show
+    
+f_name = drug_name + '_topo.jpeg'
+plt.savefig(f_name, dpi=300, facecolor='w', edgecolor='w',
+orientation='portrait', papertype=None, format=None,
+transparent=False, bbox_inches=None, pad_inches=0.1,
+frameon=None)
 
 #---Show Silhoulette
 plt.figure(2)
 plt.plot(clust_crit,lw = 1,color = 'blue')
-plt.ylabel('Silhouette criterion')
-plt.xlabel('Number of clusters')
+plt.ylabel('Silhouette criterion',fontsize = 18)
+plt.xlabel('Number of clusters',fontsize = 18)
+plt.title('Silhouette criterion ' + drug_name + ' vs. saline',fontsize = 20)
+plt.tick_params(labelsize = 16)
 plt.show
 
 
 #---Show difference matrix
 plt.figure(3)
-plt.title('difference matrix sorted')
+plt.title(drug_name + ' difference matrix sorted',fontsize = 20)
 plt.imshow(diff_mat_sort)
 plt.colorbar()
+plt.tick_params(labelsize = 16)
+plt.xlabel('Time differences within bands',fontsize = 18)
+plt.ylabel('Electrode pairs',fontsize = 18)
 
 x = -2
 y = 0
 for i in np.arange(no_clstr):
     y = y + len(best_kmeans[best_kmeans == i])/2
-    plt.scatter(x,y,c = colors[i], s = 100)
+    plt.scatter(x,y,c = colors[i], s = 150)
     y = y + len(best_kmeans[best_kmeans == i])/2
-    
-plt.text(0.5,36.5,r'$\delta$',fontsize=25)
-plt.text(3.5,36.5,r'$\theta$',fontsize=25)
-plt.text(6.5,36.5,r'$\alpha$',fontsize=25)
-plt.text(9.5,36.5,r'$\beta_1$',fontsize=25)
-plt.text(12.5,36.5,r'$\beta_2$',fontsize=25)
-plt.text(15.5,36.5,r'$\gamma$',fontsize=25)
+        
+#plt.text(0.5,36.5,r'$\delta$',fontsize=18)
+#plt.text(3.5,36.5,r'$\theta$',fontsize=18)
+#plt.text(6.5,36.5,r'$\alpha$',fontsize=18)
+#plt.text(9.5,36.5,r'$\beta_1$',fontsize=18)
+#plt.text(12.5,36.5,r'$\beta_2$',fontsize=18)
+#plt.text(15.5,36.5,r'$\gamma$',fontsize=18)
 
+plt.xticks(np.linspace(1.5,15.5,6),(r'$\delta$',r'$\theta$',r'$\alpha$',r'$\beta_{Lo}$',r'$\beta_{Hi}$',r'$\gamma$') )
+
+f_name = drug_name + '_difmat.jpeg'
+plt.savefig(f_name, dpi=300, facecolor='w', edgecolor='w',
+orientation='portrait', papertype=None, format=None,
+transparent=False, bbox_inches=None, pad_inches=0.1,
+frameon=None)
 #plt.show
 
 #---Show coherence matrix
