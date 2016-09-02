@@ -4,13 +4,13 @@ Created on Wed Aug 10 13:59:44 2016
 
 @author: vavra
 """
-from scipy.cluster.vq import kmeans2
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import matplotlib.cm as cm
 import scipy.io as sio
 import sklearn.metrics as sk
+from sklearn.cluster import KMeans
 import tsne
 plt.close('all')
 
@@ -51,14 +51,19 @@ diff_coh_res = np.reshape(diff_coh,[18,no_pairs],'F').T
 coh_res = np.reshape(coh,[24,no_pairs],'F').T
 
 #randomly permute the pair coherences
-perm = np.random.permutation(no_pairs)
-diff_coh_res = diff_coh_res[perm]
+r_perm = np.random.permutation(no_pairs)
+diff_coh_res = diff_coh_res[r_perm]
+index = index[r_perm]
+x_cord = x_cord[r_perm]
+y_cord = y_cord[r_perm]
 
 #t-SNE on dataset
 [mapped,C] = tsne.tsne(diff_coh_res, no_dims, init_dims, perplexity)
 
 #Clusterring
-labels = kmeans2(mapped,no_clstr,10)[1]
+k_means_obj = KMeans(no_clstr)
+k_means_obj.fit(mapped)
+labels = k_means_obj.labels_
 
 #Silhoulette criterion
 no_kmeans = 10
@@ -66,7 +71,9 @@ labels2 = np.zeros([no_pairs,no_kmeans,no_pairs])
 clust_crit = np.zeros([no_pairs,no_kmeans])
 for i in np.arange(2,len(labels)):
     for j in np.arange(no_kmeans):        
-        labels2[i,j,:] = kmeans2(mapped,i,10)[1]
+        k_means_obj = KMeans(i)
+        k_means_obj.fit(mapped)        
+        labels2[i,j,:] = k_means_obj.labels_
         clust_crit[i,j] = sk.silhouette_score(mapped,labels2[i,j])
 
 best_kmeans = labels2[no_clstr,np.argmax(clust_crit[no_clstr,:]),:]
@@ -169,6 +176,10 @@ plt.savefig(f_name, dpi=300, facecolor='w', edgecolor='w',
 orientation='portrait', papertype=None, format=None,
 transparent=False, bbox_inches=None, pad_inches=0.1,
 frameon=None)
+
+identify = np.c_[best_kmeans,index]
+np.save(drug_name+'_clust_ident.npy',identify)
+
 #plt.show
 
 #---Show coherence matrix

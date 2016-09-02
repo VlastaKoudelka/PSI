@@ -11,11 +11,14 @@ import scipy.io as sio
 import tsne
 plt.close('all')
 
-perplexity = 5    
+perplexity = 10
 init_dims = 18
 no_dims = 2
+no_clstr = 4
+
 
 #Import matlab file
+identify = np.load('PSI_clust_ident.npy')   #load cluster identification 
 drug_mat = sio.loadmat('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\psilocin.mat')    #open the .mat
 drug_str = drug_mat['psilocin']            #opent the structure
 coord_mat = sio.loadmat('Locations.mat')
@@ -25,9 +28,15 @@ data = drug_str['data']
 data = data[0]
 names = drug_str['namesOfElecs']
 no_sbj = data.shape[0]
-no_sbj = 1
-data = data[:,:,index]                      #select the used pairs
-data[0] = data[3]
+
+data = data[:,:,identify[:,1]]                      #select the used pairs
+data = data[[0,1,2,5,6]]
+no_sbj = data.shape[0]
+ident = identify
+
+for i in np.arange(no_sbj - 1):
+    ident = np.r_[ident,identify]
+
 
 coh = np.zeros([4,6,36,no_sbj])    #band,time,pair
  
@@ -45,12 +54,13 @@ coh_res = np.reshape(coh,[24,36*no_sbj]).T
      
      
 #t-SNE on dataset
-mapped = tsne.tsne(diff_coh_res, no_dims, init_dims, perplexity)
+[mapped,C] = tsne.tsne(diff_coh_res, no_dims, init_dims, perplexity)
 
-labels = kmeans2(mapped,4,10)
+#labels = kmeans2(mapped,no_clust,10)
+colors = cm.jet(np.linspace(0, 1, no_clstr))
 
 plt.figure(0)    
-plt.scatter(mapped[:,0],mapped[:,1],c = labels[1], s = 150,alpha = 0.5)
+plt.scatter(mapped[:,0],mapped[:,1],c = colors[ident[:,0],:], s = 150,alpha = 0.7)
 plt.show
 
 
