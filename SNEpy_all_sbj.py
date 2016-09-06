@@ -8,6 +8,7 @@ from scipy.cluster.vq import kmeans2
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.io as sio
+import matplotlib.cm as cm
 import tsne
 plt.close('all')
 
@@ -18,9 +19,9 @@ no_clstr = 4
 
 
 #Import matlab file
-identify = np.load('PSI_clust_ident.npy')   #load cluster identification 
-drug_mat = sio.loadmat('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\psilocin.mat')    #open the .mat
-drug_str = drug_mat['psilocin']            #opent the structure
+identify = np.load('MDL_clust_ident.npy')   #load cluster identification 
+drug_mat = sio.loadmat('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\MDL.mat')    #open the .mat
+drug_str = drug_mat['MDL']            #opent the structure
 coord_mat = sio.loadmat('Locations.mat')
 index = np.array(coord_mat['index'][0])     #indices of used electrode pairs
 drug_str = drug_str[0]                #first structure
@@ -30,7 +31,7 @@ names = drug_str['namesOfElecs']
 no_sbj = data.shape[0]
 
 data = data[:,:,identify[:,1]]                      #select the used pairs
-data = data[[0,1,2,5,6]]
+data = data[[0,1]]
 no_sbj = data.shape[0]
 ident = identify
 
@@ -64,14 +65,14 @@ plt.scatter(mapped[:,0],mapped[:,1],c = colors[ident[:,0],:], s = 150,alpha = 0.
 plt.show
 
 
-for i in np.arange(no_sbj):
-    plt.figure(i)
-    plt.matshow(diff_coh_res[i*36:i*36 + 36,:])    
-    plt.colorbar()
-    plt.text(0.5,36.5,r'$\delta$',fontsize=25)
-    plt.text(3.5,36.5,r'$\theta$',fontsize=25)
-    plt.text(6.5,36.5,r'$\alpha$',fontsize=25)
-    plt.text(9.5,36.5,r'$\beta_1$',fontsize=25)
-    plt.text(12.5,36.5,r'$\beta_2$',fontsize=25)
-    plt.text(15.5,36.5,r'$\gamma$',fontsize=25)
-    plt.show
+#for i in np.arange(no_sbj):
+#    plt.figure(i)
+#    plt.matshow(diff_coh_res[i*36:i*36 + 36,:])    
+#    plt.colorbar()
+#    plt.text(0.5,36.5,r'$\delta$',fontsize=25)
+#    plt.text(3.5,36.5,r'$\theta$',fontsize=25)
+#    plt.text(6.5,36.5,r'$\alpha$',fontsize=25)
+#    plt.text(9.5,36.5,r'$\beta_1$',fontsize=25)
+#    plt.text(12.5,36.5,r'$\beta_2$',fontsize=25)
+#    plt.text(15.5,36.5,r'$\gamma$',fontsize=25)
+#    plt.show

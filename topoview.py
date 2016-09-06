@@ -24,11 +24,16 @@ y_cord = coord_mat['y_pair_sel']
 index = coord_mat['index'][0]           #selected pair indices
 
 dif_treat = data_mat['dif_treat']
-dif_treat = dif_treat[:,::3]                #[:,::2] selects 20-30
+dif_treat = dif_treat[:,::3]                #[:,::3] selects 20-30
 #dif_psi_treat = data_mat['dif_psi_treat']
+<<<<<<< HEAD
 #dif_psi_treat = dif_psi_treat[:,::3]
 p_treat = data_mat['p_treat']#[index]        #select 36 from 66 pairs
 p_treat = p_treat[:,::3]                    #[:,::2] selects 20-30
+=======
+p_treat = data_mat['p_treat']                #[index]        #select 36 from 66 pairs
+p_treat = p_treat[:,::3]                    #[:,::3] selects 20-30
+>>>>>>> 689a0a76f0f636942cbd4e93304f02755adb2a43
 #p_psi_treat = data_mat['p_psi_treat'][index]
 #p_psi_treat = p_psi_treat[:,::3]
 no_el = len(index)

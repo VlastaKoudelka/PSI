@@ -17,13 +17,13 @@ plt.close('all')
 perplexity = 5
 init_dims = 18
 no_dims = 2
-no_clstr = 4
+no_clstr = 3
 no_pairs = 36
 
-drug_name = 'PSI'
+drug_name = 'MDL'
 
 #Import matlab files
-drug_mat = sio.loadmat('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\MATSoubory\psilocin.mat')    #open the .mat
+drug_mat = sio.loadmat('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\MATSoubory\MDL.mat')    #open the .mat
 coord_mat = sio.loadmat('Locations.mat')
 brain = mpimg.imread('brain2.png')
 
@@ -31,7 +31,7 @@ x_cord = np.array(coord_mat['x_pair_sel'])       #x_pair_all for all pairs
 y_cord = np.array(coord_mat['y_pair_sel'])
 index = np.array(coord_mat['index'][0])     #indices of used electrode pairs
 
-drug_str = np.array(drug_mat['psilocin'][0])            #opent the structure
+drug_str = np.array(drug_mat['MDL'][0])            #opent the structure
 data = np.array(drug_str['data'][0])
 names = drug_str['namesOfElecs']
 
