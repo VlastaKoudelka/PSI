@@ -16,12 +16,17 @@ perplexity = 10
 init_dims = 18
 no_dims = 2
 no_clstr = 4
+subjects = [0]
 
+drug_name = 'psilocin'
+path = ('/home/vlastimilo/NUDZ_Data/Filip_PSI/MATSoubory/')
+
+#path = ('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\MATSoubory\') 
 
 #Import matlab file
-identify = np.load('MDL_clust_ident.npy')   #load cluster identification 
-drug_mat = sio.loadmat('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\MDL.mat')    #open the .mat
-drug_str = drug_mat['MDL']            #opent the structure
+identify = np.load(drug_name + '_clust_ident.npy')   #load cluster identification 
+drug_mat = sio.loadmat(path + drug_name + '.mat')    #open the .mat
+drug_str = drug_mat[drug_name]            #opent the structure
 coord_mat = sio.loadmat('Locations.mat')
 index = np.array(coord_mat['index'][0])     #indices of used electrode pairs
 drug_str = drug_str[0]                #first structure
@@ -31,7 +36,7 @@ names = drug_str['namesOfElecs']
 no_sbj = data.shape[0]
 
 data = data[:,:,identify[:,1]]                      #select the used pairs
-data = data[[0,1]]
+data = data[subjects]
 no_sbj = data.shape[0]
 ident = identify
 

@@ -9,9 +9,10 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import matplotlib.cm as cm
 import scipy.io as sio
-import sklearn.metrics as sk
+from sklearn.metrics import silhouette_score as crit
 from sklearn.cluster import KMeans
 import tsne
+
 plt.close('all')
 
 perplexity = 5
@@ -22,16 +23,21 @@ no_pairs = 36
 
 drug_name = 'MDL'
 
+path = ('/home/vlastimilo/NUDZ_Data/Filip_PSI/MATSoubory/')
+        
+#path = ('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\MATSoubory\')     
+
+
 #Import matlab files
-drug_mat = sio.loadmat('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\MATSoubory\MDL.mat')    #open the .mat
+drug_mat = sio.loadmat(path + drug_name + '.mat')    #open the .mat
 coord_mat = sio.loadmat('Locations.mat')
-brain = mpimg.imread('brain2.png')
+brain = mpimg.imread('brain.png')
 
 x_cord = np.array(coord_mat['x_pair_sel'])       #x_pair_all for all pairs
 y_cord = np.array(coord_mat['y_pair_sel'])
 index = np.array(coord_mat['index'][0])     #indices of used electrode pairs
 
-drug_str = np.array(drug_mat['MDL'][0])            #opent the structure
+drug_str = np.array(drug_mat[drug_name][0])            #opent the structure
 data = np.array(drug_str['data'][0])
 names = drug_str['namesOfElecs']
 
@@ -66,7 +72,7 @@ k_means_obj.fit(mapped)
 labels = k_means_obj.labels_
 
 #Silhoulette criterion
-no_kmeans = 10
+no_kmeans = 1
 labels2 = np.zeros([no_pairs,no_kmeans,no_pairs])
 clust_crit = np.zeros([no_pairs,no_kmeans])
 for i in np.arange(2,len(labels)):
@@ -74,7 +80,7 @@ for i in np.arange(2,len(labels)):
         k_means_obj = KMeans(i)
         k_means_obj.fit(mapped)        
         labels2[i,j,:] = k_means_obj.labels_
-        clust_crit[i,j] = sk.silhouette_score(mapped,labels2[i,j])
+        clust_crit[i,j] = crit(mapped,labels2[i,j])
 
 best_kmeans = labels2[no_clstr,np.argmax(clust_crit[no_clstr,:]),:]
 best_kmeans = best_kmeans.astype(int)           #takes the best kmeans run
@@ -195,3 +201,4 @@ np.save(drug_name+'_clust_ident.npy',identify)
 #plt.text(20.5,36.5,r'$\gamma$',fontsize=25)
 #plt.tick_params(labeltop=False, labelbottom=False, bottom=False, top=False
 #                    ,left=True,right=True, labelright=False,labelleft=True)
+
