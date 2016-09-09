@@ -5,6 +5,7 @@ Created on Wed Aug 10 13:59:44 2016
 @author: vavra
 """
 import numpy as np
+import matplotlib.colors as clr
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import matplotlib.cm as cm
@@ -21,17 +22,17 @@ no_dims = 2
 no_clstr = 3
 no_pairs = 36
 
-drug_name = 'MDL'
+drug_name = 'HAL'
 
-path = ('/home/vlastimilo/NUDZ_Data/Filip_PSI/MATSoubory/')
+#path = ('/home/vlastimilo/NUDZ_Data/Filip_PSI/MATSoubory/')
         
-#path = ('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\MATSoubory\')     
+path = 'D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\MATSoubory\\'   
 
 
 #Import matlab files
 drug_mat = sio.loadmat(path + drug_name + '.mat')    #open the .mat
 coord_mat = sio.loadmat('Locations.mat')
-brain = mpimg.imread('brain.png')
+brain = mpimg.imread('SRC\\brain.png')
 
 x_cord = np.array(coord_mat['x_pair_sel'])       #x_pair_all for all pairs
 y_cord = np.array(coord_mat['y_pair_sel'])
@@ -154,20 +155,31 @@ plt.show
 
 #---Show difference matrix
 plt.figure(3)
+fig, ax = plt.subplots()
+im = ax.imshow(diff_mat_sort, cmap=plt.get_cmap('jet'), 
+               vmin= - np.amax(np.abs(diff_mat_sort)), vmax=np.amax(np.abs(diff_mat_sort)))
+fig.colorbar(im)
+
+
 plt.title(drug_name + ' difference matrix sorted',fontsize = 20)
-plt.imshow(diff_mat_sort)
-plt.colorbar()
+
+
+fig.show(diff_mat_sort)
+
 plt.tick_params(labelsize = 16)
 plt.xlabel('Time differences within bands',fontsize = 18)
 plt.ylabel('Electrode pairs',fontsize = 18)
 
-x = -2
-y = 0
+x = -2*np.ones(no_clstr)
+y = -0.5
+y_array = np.zeros(no_clstr)
 for i in np.arange(no_clstr):
-    y = y + len(best_kmeans[best_kmeans == i])/2
-    plt.scatter(x,y,c = colors[i], s = 150)
-    y = y + len(best_kmeans[best_kmeans == i])/2
-        
+    step = len(best_kmeans[best_kmeans == i])/2.
+    y = y + step
+    y_array[i] = y
+    y = y + step
+
+plt.scatter(x,y_array,c = colors[np.arange(no_clstr)], s = 150)        
 #plt.text(0.5,36.5,r'$\delta$',fontsize=18)
 #plt.text(3.5,36.5,r'$\theta$',fontsize=18)
 #plt.text(6.5,36.5,r'$\alpha$',fontsize=18)
