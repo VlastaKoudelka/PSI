@@ -12,6 +12,7 @@ import matplotlib.cm as cm
 import scipy.io as sio
 from sklearn.metrics import silhouette_score as crit
 from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA as pca
 import tsne
 
 plt.close('all')
@@ -19,10 +20,10 @@ plt.close('all')
 perplexity = 5
 init_dims = 18
 no_dims = 2
-no_clstr = 3
+no_clstr = 1
 no_pairs = 36
 
-drug_name = 'HAL'
+drug_name = 'psilocinWAY'
 
 #path = ('/home/vlastimilo/NUDZ_Data/Filip_PSI/MATSoubory/')
         
@@ -41,7 +42,6 @@ index = np.array(coord_mat['index'][0])     #indices of used electrode pairs
 drug_str = np.array(drug_mat[drug_name][0])            #opent the structure
 data = np.array(drug_str['data'][0])
 names = drug_str['namesOfElecs']
-
 data = data[:,:,index]                      #select the used pairs
 #index = np.arange(0,no_pairs,1)            #uncomment for all pairs
 average = np.mean(data,0).T
@@ -67,9 +67,15 @@ y_cord = y_cord[r_perm]
 #t-SNE on dataset
 [mapped,C] = tsne.tsne(diff_coh_res, no_dims, init_dims, perplexity)
 
+#PCA - uncomment for use instead of t-SNE
+
+#pca_obj = pca(n_components=2)
+#mapped = pca_obj.fit_transform(diff_coh_res)
+
+
 #Clusterring
 k_means_obj = KMeans(no_clstr)
-k_means_obj.fit(mapped)
+k_means_obj.fit(diff_coh_res)
 labels = k_means_obj.labels_
 
 #Silhoulette criterion

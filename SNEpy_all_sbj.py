@@ -12,16 +12,17 @@ import matplotlib.cm as cm
 import tsne
 plt.close('all')
 
-perplexity = 10
+perplexity =  50
 init_dims = 18
 no_dims = 2
 no_clstr = 4
-subjects = [0]
+no_el = 36
+subjects = [0,1,2,3,4,5,6,7]
 
 drug_name = 'psilocin'
-path = ('/home/vlastimilo/NUDZ_Data/Filip_PSI/MATSoubory/')
+#path = ('/home/vlastimilo/NUDZ_Data/Filip_PSI/MATSoubory/')
 
-#path = ('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\MATSoubory\') 
+path = ('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\MATSoubory\\') 
 
 #Import matlab file
 identify = np.load(drug_name + '_clust_ident.npy')   #load cluster identification 
@@ -55,6 +56,7 @@ for i,val in enumerate(np.arange(0,56,14)):
 #Diferentiate the data in time
 diff_coh = np.diff(coh,1,0)
 diff_coh_res = np.reshape(diff_coh,[18,36*no_sbj],'F').T 
+diff_coh_res = diff_coh_res/np.amax(diff_coh_res)
 
 coh_res = np.reshape(coh,[24,36*no_sbj]).T 
      
@@ -65,9 +67,33 @@ coh_res = np.reshape(coh,[24,36*no_sbj]).T
 #labels = kmeans2(mapped,no_clust,10)
 colors = cm.jet(np.linspace(0, 1, no_clstr))
 
+#create subject labels
+
+sub_labels = np.ones((no_sbj,no_el))
+for i in np.arange(no_sbj):
+    sub_labels[i] = sub_labels[i]*i
+    
+sub_labels = np.reshape(sub_labels,[no_el*no_sbj,1],'C').astype(int)    
+
+
 plt.figure(0)    
 plt.scatter(mapped[:,0],mapped[:,1],c = colors[ident[:,0],:], s = 150,alpha = 0.7)
+plt.title(drug_name + ' coherence clusters for all subjects', fontsize = 20)
+plt.ylabel('Feature 2',fontsize = 18)
+plt.xlabel('Feature 1',fontsize = 18)
+plt.tick_params(labeltop=False, labelbottom=False, bottom=True, top=True
+                    ,left=True,right=True, labelright=False,labelleft=False)
+for i,coord in enumerate(mapped):
+    plt.text(coord[0],coord[1],sub_labels[i][0],fontsize=12)
+                
 plt.show
+
+f_name = 'EXPORT\\' + drug_name + '_subject_clusters.jpeg'
+plt.savefig(f_name, dpi=300, facecolor='w', edgecolor='w',
+orientation='portrait', papertype=None, format=None,
+transparent=False, bbox_inches=None, pad_inches=0.1,
+frameon=None)
+#np.save(drug_name + '_perm_test.npy',silhouette)
 
 
 #for i in np.arange(no_sbj):

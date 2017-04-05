@@ -19,12 +19,13 @@ import matplotlib.cm as cm
 import scipy.io as sio
 from sklearn.metrics import silhouette_score as crit
 from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA as pca
 import tsne
 import time
 
 
  
-plt.close('all')
+#plt.close('all')
 
 perplexity = 5
 init_dims = 18
@@ -32,14 +33,13 @@ no_dims = 2
 no_pairs = 36
 no_perm = 50
 no_map = 1      #a number of t-SNE runs in one permutation
-no_subs = 1
 t = time.time()
 
 drug_name = 'psilocin'
 
-path = ('/home/vlastimilo/NUDZ_Data/Filip_PSI/MATSoubory/')
+#path = ('/home/vlastimilo/NUDZ_Data/Filip_PSI/MATSoubory/')
 
-#path = ('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\MATSoubory\') 
+path = ('D:\Filip_PSI_mysi\Coherence_StatisticFinalTables\MATSoubory\\') 
 
 #Import matlab files
 drug_mat = sio.loadmat(path + drug_name + '.mat')   #open the .mat
@@ -76,12 +76,17 @@ for i in np.arange(no_perm):
     print('Permutation number:' + str(i))
     C_min = 1e10
     dif_perm = diff_coh_res[np.random.permutation(no_pairs)]
-    #coh_perm = diff_coh_res
-    for j in np.arange(no_map):
-        [mapped,C] = tsne.tsne(dif_perm, no_dims, init_dims, perplexity)
-        if C < C_min:
-            win_map = mapped    #a map with the lowest error
-            C_min = C
+    coh_perm = diff_coh_res
+#    for j in np.arange(no_map):
+#        [mapped,C] = tsne.tsne(dif_perm, no_dims, init_dims, perplexity)
+#        if C < C_min:
+#            win_map = mapped    #a map with the lowest error
+#            C_min = C
+
+    #PCA - uncomment for use instead of t-SNE
+    pca_obj = pca(n_components=2)
+    win_map = pca_obj.fit_transform(diff_coh_res)
+
     for k in np.arange(2,no_pairs):
         kmeans_obj = KMeans(k)
         kmeans_obj.fit(win_map)
@@ -94,12 +99,12 @@ for i in np.arange(no_perm):
 
 plt.figure
 plt.plot(silhouette.T,color = 'red')
-plt.title(drug_name + ' silhouetts over ' + str(no_perm) + ' permutations with t-SNE')
+plt.title('saline vs. psilocin silhouetts over ' + str(no_perm) + ' permutations PCA')
 plt.xlabel('Number of clusters')
 plt.ylabel('Criterion value')
 plt.show
 
-f_name = 'EXPORT/' + drug_name + '_perm_test.jpeg'
+f_name = 'EXPORT\\' + drug_name + '_perm_test.jpeg'
 plt.savefig(f_name, dpi=300, facecolor='w', edgecolor='w',
 orientation='portrait', papertype=None, format=None,
 transparent=False, bbox_inches=None, pad_inches=0.1,
@@ -109,14 +114,6 @@ print(time.time()-t)
 
 
     
-    
-
-#source = diff_coh_res[np.random.permutation(no_pairs)]
-#for i in np.arange(no_subs - 1):
-#    source = np.r_[source,diff_coh_res[np.random.permutation(no_pairs)]]
-#
-#[mapped,C] = tsne.tsne(source, no_dims, init_dims, perplexity)
-#plt.scatter(mapped[:,0],mapped[:,1])
 
 
 
